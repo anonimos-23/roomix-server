@@ -12,15 +12,15 @@ services:
     volumes:
       - roomix_pg_data:/bitnami/postgresql
 
-  redis:
-    image: bitnami/redis:latest
-    environment:
-      - ALLOW_EMPTY_PASSWORD=yes
-    ports:
-      - '6379:6379'
-    volumes:
-      - 'roomix_redis_data:/bitnami/redis/data'
+  # redis:
+  #   image: bitnami/redis:latest
+  #   environment:
+  #     - ALLOW_EMPTY_PASSWORD=yes
+  #   ports:
+  #     - '6379:6379'
+  #   volumes:
+  #     - 'roomix_redis_data:/bitnami/redis/data'
 
 volumes:
   roomix_pg_data:
-  roomix_redis_data:
+  # roomix_redis_data:

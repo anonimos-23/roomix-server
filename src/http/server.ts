@@ -1,16 +1,38 @@
 import fastify from 'fastify'
-import multipart from '@fastify/multipart'
-import cors from  '@fastify/cors'
+import cors from '@fastify/cors'
+import jwt from '@fastify/jwt'
+import cookie from '@fastify/cookie'
+import {
+  validatorCompiler,
+  serializerCompiler,
+} from 'fastify-type-provider-zod'
 import { createUser } from './routes/create-user'
+import { auth } from './routes/authentication'
+import { env } from '../env'
 
 const app = fastify()
+
+// Registration of fastify-type-provider-zod
+app.setValidatorCompiler(validatorCompiler)
+app.setSerializerCompiler(serializerCompiler)
+
+// Registration of server components
 app.register(cors, {
-    origin: 'http://localhost:5173',
+  origin: 'http://localhost:5173',
 })
-app.register(multipart)
+app.register(cookie, {
+  secret: env.JWT_AND_COOKIES_SIGN_SECRET,
+  hook: 'onRequest',
+})
+app.register(jwt, {
+  secret: env.JWT_AND_COOKIES_SIGN_SECRET,
+})
+
+// Routes registration
 app.register(createUser)
+app.register(auth)
 
 app.listen({ port: 3333 }).then(() => {
-    console.log('🚀 HTTP Server running!')
-    console.log('🔗 Server address: http://127.0.0.1:3333')
+  console.log('🚀 HTTP Server running!')
+  console.log('🔗 Server address: http://127.0.0.1:3333')
 })

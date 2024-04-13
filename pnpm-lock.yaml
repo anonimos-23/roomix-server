@@ -11,21 +11,27 @@ dependencies:
   '@aws-sdk/s3-request-presigner':
     specifier: ^3.525.0
     version: 3.525.0
+  '@fastify/cookie':
+    specifier: ^9.3.1
+    version: 9.3.1
   '@fastify/cors':
     specifier: ^9.0.1
     version: 9.0.1
-  '@fastify/multipart':
-    specifier: ^8.1.0
-    version: 8.1.0
+  '@fastify/jwt':
+    specifier: ^8.0.0
+    version: 8.0.0
   '@prisma/client':
     specifier: 5.11.0
-    version: 5.11.0(prisma@5.10.2)
+    version: 5.11.0(prisma@5.12.1)
   bcrypt:
     specifier: ^5.1.1
     version: 5.1.1
   fastify:
     specifier: ^4.26.1
     version: 4.26.1
+  fastify-type-provider-zod:
+    specifier: ^1.1.9
+    version: 1.1.9(fastify@4.26.1)(zod@3.22.4)
 
 devDependencies:
   '@types/bcrypt':
@@ -35,8 +41,8 @@ devDependencies:
     specifier: ^20.11.20
     version: 20.11.20
   prisma:
-    specifier: ^5.10.2
-    version: 5.10.2
+    specifier: ^5.11.0
+    version: 5.12.1
   tsx:
     specifier: ^4.7.1
     version: 4.7.1
@@ -919,11 +925,11 @@ packages:
       fast-uri: 2.3.0
     dev: false
 
-  /@fastify/busboy@1.2.1:
-    resolution: {integrity: sha512-7PQA7EH43S0CxcOa9OeAnaeA0oQ+e/DHNPZwSQM9CQHW76jle5+OvLdibRp/Aafs9KXbLhxyjOTkRjWUbQEd3Q==}
-    engines: {node: '>=14'}
+  /@fastify/cookie@9.3.1:
+    resolution: {integrity: sha512-h1NAEhB266+ZbZ0e9qUE6NnNR07i7DnNXWG9VbbZ8uC6O/hxHpl+Zoe5sw1yfdZ2U6XhToUGDnzQtWJdCaPwfg==}
     dependencies:
-      text-decoding: 1.0.0
+      cookie-signature: 1.2.1
+      fastify-plugin: 4.5.1
     dev: false
 
   /@fastify/cors@9.0.1:
@@ -931,10 +937,6 @@ packages:
     dependencies:
       fastify-plugin: 4.5.1
       mnemonist: 0.39.6
-    dev: false
-
-  /@fastify/deepmerge@1.3.0:
-    resolution: {integrity: sha512-J8TOSBq3SoZbDhM9+R/u77hP93gz/rajSA+K2kGyijPpORPWUXHUpTaleoj+92As0S9uPRP7Oi8IqMf0u+ro6A==}
     dev: false
 
   /@fastify/error@3.4.1:
@@ -947,21 +949,25 @@ packages:
       fast-json-stringify: 5.12.0
     dev: false
 
+  /@fastify/jwt@8.0.0:
+    resolution: {integrity: sha512-pJHjmZaokteZFMbsVVt7pbyJpbDogTnpl/aD7eR3vLOPgfktp4k4gUM6cd7RtjL/Ol1qDwL5mup+vdNlZI3K0Q==}
+    dependencies:
+      '@fastify/error': 3.4.1
+      '@lukeed/ms': 2.0.2
+      fast-jwt: 3.3.3
+      fastify-plugin: 4.5.1
+      steed: 1.1.3
+    dev: false
+
   /@fastify/merge-json-schemas@0.1.1:
     resolution: {integrity: sha512-fERDVz7topgNjtXsJTTW1JKLy0rhuLRcquYqNR9rF7OcVpCa2OVW49ZPDIhaRRCaUuvVxI+N416xUoF76HNSXA==}
     dependencies:
       fast-deep-equal: 3.1.3
     dev: false
 
-  /@fastify/multipart@8.1.0:
-    resolution: {integrity: sha512-sRX9X4ZhAqRbe2kDvXY2NK7i6Wf1Rm2g/CjpGYYM7+Np8E6uWQXcj761j08qPfPO8PJXM+vJ7yrKbK1GPB+OeQ==}
-    dependencies:
-      '@fastify/busboy': 1.2.1
-      '@fastify/deepmerge': 1.3.0
-      '@fastify/error': 3.4.1
-      fastify-plugin: 4.5.1
-      secure-json-parse: 2.7.0
-      stream-wormhole: 1.1.0
+  /@lukeed/ms@2.0.2:
+    resolution: {integrity: sha512-9I2Zn6+NJLfaGoz9jN3lpwDgAYvfGeNYdbAIjJOqzs4Tpc+VU3Jqq4IofSUBKajiDS8k9fZIg18/z13mpk1bsA==}
+    engines: {node: '>=8'}
     dev: false
 
   /@mapbox/node-pre-gyp@1.0.11:
@@ -982,7 +988,7 @@ packages:
       - supports-color
     dev: false
 
-  /@prisma/client@5.11.0(prisma@5.10.2):
+  /@prisma/client@5.11.0(prisma@5.12.1):
     resolution: {integrity: sha512-SWshvS5FDXvgJKM/a0y9nDC1rqd7KG0Q6ZVzd+U7ZXK5soe73DJxJJgbNBt2GNXOa+ysWB4suTpdK5zfFPhwiw==}
     engines: {node: '>=16.13'}
     requiresBuild: true
@@ -992,35 +998,35 @@ packages:
       prisma:
         optional: true
     dependencies:
-      prisma: 5.10.2
+      prisma: 5.12.1
     dev: false
 
-  /@prisma/debug@5.10.2:
-    resolution: {integrity: sha512-bkBOmH9dpEBbMKFJj8V+Zp8IZHIBjy3fSyhLhxj4FmKGb/UBSt9doyfA6k1UeUREsMJft7xgPYBbHSOYBr8XCA==}
+  /@prisma/debug@5.12.1:
+    resolution: {integrity: sha512-kd/wNsR0klrv79o1ITsbWxYyh4QWuBidvxsXSParPsYSu0ircUmNk3q4ojsgNc3/81b0ozg76iastOG43tbf8A==}
 
-  /@prisma/engines-version@5.10.0-34.5a9203d0590c951969e85a7d07215503f4672eb9:
-    resolution: {integrity: sha512-uCy/++3Jx/O3ufM+qv2H1L4tOemTNqcP/gyEVOlZqTpBvYJUe0tWtW0y3o2Ueq04mll4aM5X3f6ugQftOSLdFQ==}
+  /@prisma/engines-version@5.12.0-21.473ed3124229e22d881cb7addf559799debae1ab:
+    resolution: {integrity: sha512-6yvO8s80Tym61aB4QNtYZfWVmE3pwqe807jEtzm8C5VDe7nw8O1FGX3TXUaXmWV0fQTIAfRbeL2Gwrndabp/0g==}
 
-  /@prisma/engines@5.10.2:
-    resolution: {integrity: sha512-HkSJvix6PW8YqEEt3zHfCYYJY69CXsNdhU+wna+4Y7EZ+AwzeupMnUThmvaDA7uqswiHkgm5/SZ6/4CStjaGmw==}
+  /@prisma/engines@5.12.1:
+    resolution: {integrity: sha512-HQDdglLw2bZR/TXD2Y+YfDMvi5Q8H+acbswqOsWyq9pPjBLYJ6gzM+ptlTU/AV6tl0XSZLU1/7F4qaWa8bqpJA==}
     requiresBuild: true
     dependencies:
-      '@prisma/debug': 5.10.2
-      '@prisma/engines-version': 5.10.0-34.5a9203d0590c951969e85a7d07215503f4672eb9
-      '@prisma/fetch-engine': 5.10.2
-      '@prisma/get-platform': 5.10.2
+      '@prisma/debug': 5.12.1
+      '@prisma/engines-version': 5.12.0-21.473ed3124229e22d881cb7addf559799debae1ab
+      '@prisma/fetch-engine': 5.12.1
+      '@prisma/get-platform': 5.12.1
 
-  /@prisma/fetch-engine@5.10.2:
-    resolution: {integrity: sha512-dSmXcqSt6DpTmMaLQ9K8ZKzVAMH3qwGCmYEZr/uVnzVhxRJ1EbT/w2MMwIdBNq1zT69Rvh0h75WMIi0mrIw7Hg==}
+  /@prisma/fetch-engine@5.12.1:
+    resolution: {integrity: sha512-qSs3KcX1HKcea1A+hlJVK/ljj0PNIUHDxAayGMvgJBqmaN32P9tCidlKz1EGv6WoRFICYnk3Dd/YFLBwnFIozA==}
     dependencies:
-      '@prisma/debug': 5.10.2
-      '@prisma/engines-version': 5.10.0-34.5a9203d0590c951969e85a7d07215503f4672eb9
-      '@prisma/get-platform': 5.10.2
+      '@prisma/debug': 5.12.1
+      '@prisma/engines-version': 5.12.0-21.473ed3124229e22d881cb7addf559799debae1ab
+      '@prisma/get-platform': 5.12.1
 
-  /@prisma/get-platform@5.10.2:
-    resolution: {integrity: sha512-nqXP6vHiY2PIsebBAuDeWiUYg8h8mfjBckHh6Jezuwej0QJNnjDiOq30uesmg+JXxGk99nqyG3B7wpcOODzXvg==}
+  /@prisma/get-platform@5.12.1:
+    resolution: {integrity: sha512-pgIR+pSvhYHiUcqXVEZS31NrFOTENC9yFUdEAcx7cdQBoZPmHVjtjN4Ss6NzVDMYPrKJJ51U14EhEoeuBlMioQ==}
     dependencies:
-      '@prisma/debug': 5.10.2
+      '@prisma/debug': 5.12.1
 
   /@smithy/abort-controller@2.1.3:
     resolution: {integrity: sha512-c2aYH2Wu1RVE3rLlVgg2kQOBJGM0WbjReQi5DnPTm2Zb7F0gk7J2aeQeaX2u/lQZoHl6gv8Oac7mt9alU3+f4A==}
@@ -1554,6 +1560,15 @@ packages:
       readable-stream: 3.6.2
     dev: false
 
+  /asn1.js@5.4.1:
+    resolution: {integrity: sha512-+I//4cYPccV8LdmBLiX8CYvf9Sp3vQsrqu2QNXRcrbiWvcx/UdlFiqUJJzxRQxgsZmvhXhn4cSKeSmoFjVdupA==}
+    dependencies:
+      bn.js: 4.12.0
+      inherits: 2.0.4
+      minimalistic-assert: 1.0.1
+      safer-buffer: 2.1.2
+    dev: false
+
   /atomic-sleep@1.0.0:
     resolution: {integrity: sha512-kNOjDqAh7px0XWNI+4QbzoiR/nTkHAWNud2uvnJquD1/x5a7EQZMJT0AczqK0Qn67oY/TTQ1LbUKajZpp3I9tQ==}
     engines: {node: '>=8.0.0'}
@@ -1588,6 +1603,10 @@ packages:
     transitivePeerDependencies:
       - encoding
       - supports-color
+    dev: false
+
+  /bn.js@4.12.0:
+    resolution: {integrity: sha512-c98Bf3tPniI+scsdk237ku1Dc3ujXQTSgyiPUDEOe7tRkhrqridvh8klBv0HCEso1OLOYcHuCv/cS6DNxKH+ZA==}
     dev: false
 
   /bowser@2.11.0:
@@ -1626,6 +1645,11 @@ packages:
     resolution: {integrity: sha512-ty/fTekppD2fIwRvnZAVdeOiGd1c7YXEixbgJTNzqcxJWKQnjJ/V1bNEEE6hygpM3WjwHFUVK6HTjWSzV4a8sQ==}
     dev: false
 
+  /cookie-signature@1.2.1:
+    resolution: {integrity: sha512-78KWk9T26NhzXtuL26cIJ8/qNHANyJ/ZYrmEXFzUmhZdjpBv+DlWlOANRTGBt48YcyslsLrj0bMLFTmXvLRCOw==}
+    engines: {node: '>=6.6.0'}
+    dev: false
+
   /cookie@0.6.0:
     resolution: {integrity: sha512-U71cyTamuh1CRNCfpGY6to28lxvNwPG4Guz/EVjgf3Jmzv0vlDp1atT9eS5dDjMYHucpHbWns6Lwf3BKz6svdw==}
     engines: {node: '>= 0.6'}
@@ -1650,6 +1674,12 @@ packages:
   /detect-libc@2.0.2:
     resolution: {integrity: sha512-UX6sGumvvqSaXgdKGUsgZWqcUyIXZ/vZTrlRT/iobiKhGL0zL4d3osHj3uqllWJK+i+sixDS/3COVEOFbupFyw==}
     engines: {node: '>=8'}
+    dev: false
+
+  /ecdsa-sig-formatter@1.0.11:
+    resolution: {integrity: sha512-nagl3RYrbNv6kQkeJIpt6NJZy8twLB/2vtz6yN9Z4vRKHN4/QZJIEbqohALSgwKdnksuY3k5Addp5lg8sVoVcQ==}
+    dependencies:
+      safe-buffer: 5.2.1
     dev: false
 
   /emoji-regex@8.0.0:
@@ -1721,6 +1751,16 @@ packages:
       rfdc: 1.3.1
     dev: false
 
+  /fast-jwt@3.3.3:
+    resolution: {integrity: sha512-oS3P8bRI24oPLJUePt2OgF64FBQib5TlgHLFQxYNoHYEEZe0gU3cKjJAVqpB5XKV/zjxmq4Hzbk3fgfW/wRz8Q==}
+    engines: {node: '>=16 <22'}
+    dependencies:
+      '@lukeed/ms': 2.0.2
+      asn1.js: 5.4.1
+      ecdsa-sig-formatter: 1.0.11
+      mnemonist: 0.39.6
+    dev: false
+
   /fast-querystring@1.1.2:
     resolution: {integrity: sha512-g6KuKWmFXc0fID8WWH0jit4g0AGBoJhCkJMb1RmbsSEUNvQ+ZC8D6CUZ+GtF8nMzSPXnhiePyyqqipzNNEnHjg==}
     dependencies:
@@ -1743,8 +1783,26 @@ packages:
       strnum: 1.0.5
     dev: false
 
+  /fastfall@1.5.1:
+    resolution: {integrity: sha512-KH6p+Z8AKPXnmA7+Iz2Lh8ARCMr+8WNPVludm1LGkZoD2MjY6LVnRMtTKhkdzI+jr0RzQWXKzKyBJm1zoHEL4Q==}
+    engines: {node: '>=0.10.0'}
+    dependencies:
+      reusify: 1.0.4
+    dev: false
+
   /fastify-plugin@4.5.1:
     resolution: {integrity: sha512-stRHYGeuqpEZTL1Ef0Ovr2ltazUT9g844X5z/zEBFLG8RYlpDiOCIG+ATvYEp+/zmc7sN29mcIMp8gvYplYPIQ==}
+    dev: false
+
+  /fastify-type-provider-zod@1.1.9(fastify@4.26.1)(zod@3.22.4):
+    resolution: {integrity: sha512-Ztnu1ZWJEKJouZvdTyfgjuVqS+A4JLoCbWBvFqFhfnrg6YQvEvW+5cJvP98kNbuV5gjfpWmHSOTi3BpkidJPQg==}
+    peerDependencies:
+      fastify: ^4.0.0
+      zod: ^3.14.2
+    dependencies:
+      fastify: 4.26.1
+      zod: 3.22.4
+      zod-to-json-schema: 3.22.5(zod@3.22.4)
     dev: false
 
   /fastify@4.26.1:
@@ -1770,10 +1828,24 @@ packages:
       - supports-color
     dev: false
 
+  /fastparallel@2.4.1:
+    resolution: {integrity: sha512-qUmhxPgNHmvRjZKBFUNI0oZuuH9OlSIOXmJ98lhKPxMZZ7zS/Fi0wRHOihDSz0R1YiIOjxzOY4bq65YTcdBi2Q==}
+    dependencies:
+      reusify: 1.0.4
+      xtend: 4.0.2
+    dev: false
+
   /fastq@1.17.1:
     resolution: {integrity: sha512-sRVD3lWVIXWg6By68ZN7vho9a1pQcN/WBFaAAsDDFzlJjvoGx0P8z7V1t72grFJfJhu3YPZBuu25f7Kaw2jN1w==}
     dependencies:
       reusify: 1.0.4
+    dev: false
+
+  /fastseries@1.7.2:
+    resolution: {integrity: sha512-dTPFrPGS8SNSzAt7u/CbMKCJ3s01N04s4JFbORHcmyvVfVKmbhMD1VtRbh5enGHxkaQDqWyLefiKOGGmohGDDQ==}
+    dependencies:
+      reusify: 1.0.4
+      xtend: 4.0.2
     dev: false
 
   /find-my-way@8.1.0:
@@ -1912,6 +1984,10 @@ packages:
       semver: 6.3.1
     dev: false
 
+  /minimalistic-assert@1.0.1:
+    resolution: {integrity: sha512-UtJcAD4yEaGtjPezWuO9wC4nwUnVH/8/Im3yEHQP4b67cXlD/Qr9hdITCU1xDbSEXg2XKNaP8jsReV7vQd00/A==}
+    dev: false
+
   /minimatch@3.1.2:
     resolution: {integrity: sha512-J7p63hRiAjw1NDEww1W7i37+ByIrOWO5XQQAzZ3VOcL0PNybwpfmV/N05zFAzwQ9USyEcX6t3UO+K5aqBQOIHw==}
     dependencies:
@@ -2040,13 +2116,13 @@ packages:
       thread-stream: 2.4.1
     dev: false
 
-  /prisma@5.10.2:
-    resolution: {integrity: sha512-hqb/JMz9/kymRE25pMWCxkdyhbnIWrq+h7S6WysJpdnCvhstbJSNP/S6mScEcqiB8Qv2F+0R3yG+osRaWqZacQ==}
+  /prisma@5.12.1:
+    resolution: {integrity: sha512-SkMnb6wyIxTv9ACqiHBI2u9gD6y98qXRoCoLEnZsF6yee5Qg828G+ARrESN+lQHdw4maSZFFSBPPDpvSiVTo0Q==}
     engines: {node: '>=16.13'}
     hasBin: true
     requiresBuild: true
     dependencies:
-      '@prisma/engines': 5.10.2
+      '@prisma/engines': 5.12.1
 
   /process-warning@2.3.2:
     resolution: {integrity: sha512-n9wh8tvBe5sFmsqlg+XQhaQLumwpqoAUruLwjCopgTmUBjJ/fjtBsJzKleCaIGBOMXYEhp1YfKl4d7rJ5ZKJGA==}
@@ -2148,6 +2224,10 @@ packages:
     engines: {node: '>=10'}
     dev: false
 
+  /safer-buffer@2.1.2:
+    resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
+    dev: false
+
   /secure-json-parse@2.7.0:
     resolution: {integrity: sha512-6aU+Rwsezw7VR8/nyvKTx8QpWH9FrcYiXXlqC4z5d5XQBDRqtbfsRjnwGyqbi3gddNtWHuEk9OANUotL26qKUw==}
     dev: false
@@ -2188,9 +2268,14 @@ packages:
     engines: {node: '>= 10.x'}
     dev: false
 
-  /stream-wormhole@1.1.0:
-    resolution: {integrity: sha512-gHFfL3px0Kctd6Po0M8TzEvt3De/xu6cnRrjlfYNhwbhLPLwigI2t1nc6jrzNuaYg5C4YF78PPFuQPzRiqn9ew==}
-    engines: {node: '>=4.0.0'}
+  /steed@1.1.3:
+    resolution: {integrity: sha512-EUkci0FAUiE4IvGTSKcDJIQ/eRUP2JJb56+fvZ4sdnguLTqIdKjSxUe138poW8mkvKWXW2sFPrgTsxqoISnmoA==}
+    dependencies:
+      fastfall: 1.5.1
+      fastparallel: 2.4.1
+      fastq: 1.17.1
+      fastseries: 1.7.2
+      reusify: 1.0.4
     dev: false
 
   /string-width@4.2.3:
@@ -2229,10 +2314,6 @@ packages:
       minizlib: 2.1.2
       mkdirp: 1.0.4
       yallist: 4.0.0
-    dev: false
-
-  /text-decoding@1.0.0:
-    resolution: {integrity: sha512-/0TJD42KDnVwKmDK6jj3xP7E2MG7SHAOG4tyTgyUCRPdHwvkquYNLEQltmdMa3owq3TkddCVcTsoctJI8VQNKA==}
     dev: false
 
   /thread-stream@2.4.1:
@@ -2315,10 +2396,22 @@ packages:
     resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}
     dev: false
 
+  /xtend@4.0.2:
+    resolution: {integrity: sha512-LKYU1iAXJXUgAXn9URjiu+MWhyUXHsvfp7mcuYm9dSUKK0/CjtrUwFAxD82/mCWbtLsGjFIad0wIsod4zrTAEQ==}
+    engines: {node: '>=0.4'}
+    dev: false
+
   /yallist@4.0.0:
     resolution: {integrity: sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A==}
     dev: false
 
+  /zod-to-json-schema@3.22.5(zod@3.22.4):
+    resolution: {integrity: sha512-+akaPo6a0zpVCCseDed504KBJUQpEW5QZw7RMneNmKw+fGaML1Z9tUNLnHHAC8x6dzVRO1eB2oEMyZRnuBZg7Q==}
+    peerDependencies:
+      zod: ^3.22.4
+    dependencies:
+      zod: 3.22.4
+    dev: false
+
   /zod@3.22.4:
     resolution: {integrity: sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==}
-    dev: true
