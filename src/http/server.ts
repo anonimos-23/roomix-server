@@ -9,8 +9,12 @@ import {
 import { createUser } from './routes/create-user'
 import { auth } from './routes/authentication'
 import { env } from '../env'
+import { errorHandler } from './error-handler'
 
 const app = fastify()
+
+// Set custom error handler
+app.setErrorHandler(errorHandler)
 
 // Registration of fastify-type-provider-zod
 app.setValidatorCompiler(validatorCompiler)

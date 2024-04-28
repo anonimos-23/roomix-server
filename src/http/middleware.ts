@@ -1,4 +1,5 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
+import { Unauthorized } from './routes/_errors/unauthorized'
 
 interface CurrentUser {
   sub: string
@@ -14,13 +15,13 @@ export async function getCurrentUser(
   const token = request.cookies.auth
 
   if (token === undefined) {
-    return reply.status(401).send({ code: 'UNAUTHORIZED' })
+    throw new Unauthorized()
   }
 
   const currentUser: CurrentUser | null = app.jwt.decode(token)
 
   if (currentUser === null) {
-    return reply.status(401).send({ code: 'UNAUTHORIZED' })
+    throw new Unauthorized()
   }
 
   return { currentUser }

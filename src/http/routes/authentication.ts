@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { prisma } from '../../lib/prisma'
 import bcrypt from 'bcrypt'
 import { ZodTypeProvider } from 'fastify-type-provider-zod'
+import { BadRequest } from './_errors/bad-request'
 
 export async function auth(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().post(
@@ -11,8 +12,16 @@ export async function auth(app: FastifyInstance) {
       schema: {
         body: z.object({
           email: z.string().email(),
-          password: z.string(),
+          password: z.string().min(8),
         }),
+        response: {
+          200: z.object({
+            token: z.string(),
+          }),
+          400: z.object({
+            message: z.string(),
+          }),
+        },
       },
     },
     async (request, reply) => {
@@ -25,17 +34,13 @@ export async function auth(app: FastifyInstance) {
       })
 
       if (!user) {
-        return reply
-          .status(401)
-          .send({ message: 'Email ou password inválidos.' })
+        throw new BadRequest('Email ou password inválidos')
       }
 
       const doesPasswordMatch = await bcrypt.compare(password, user.password)
 
       if (!doesPasswordMatch) {
-        return reply
-          .status(401)
-          .send({ message: 'Email ou password inválidos.' })
+        throw new BadRequest('Email ou password inválidos')
       }
 
       let name = user.lastName
