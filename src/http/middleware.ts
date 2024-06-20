@@ -1,28 +1,30 @@
-import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
+import { FastifyInstance, FastifyRequest } from 'fastify'
 import { Unauthorized } from './routes/_errors/unauthorized'
+import { z } from 'zod'
+import { VerifyPayloadType } from '@fastify/jwt'
 
-interface CurrentUser {
-  sub: string
-  name: string
-  avatarUrl: string
-}
+const jwtPayloadSchema = z.object({
+  userId: z.string(),
+  storeId: z.string().nullable(),
+})
 
-export async function getCurrentUser(
-  app: FastifyInstance,
-  request: FastifyRequest,
-  reply: FastifyReply
+type AccessTokenPayload = VerifyPayloadType & z.infer<typeof jwtPayloadSchema>
+
+export async function getLoggedUser(
+  { jwt }: FastifyInstance,
+  request: FastifyRequest
 ) {
-  const token = request.cookies.auth
+  const accessToken = request.headers.authorization?.split(' ')[1]
 
-  if (token === undefined) {
+  if (accessToken === undefined) {
     throw new Unauthorized()
   }
 
-  const currentUser: CurrentUser | null = app.jwt.decode(token)
+  const payload = jwt.verify<AccessTokenPayload>(accessToken)
 
-  if (currentUser === null) {
+  if (payload === null) {
     throw new Unauthorized()
   }
 
-  return { currentUser }
+  return payload
 }

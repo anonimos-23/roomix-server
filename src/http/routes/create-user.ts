@@ -40,7 +40,7 @@ export async function createUser(app: FastifyInstance) {
       const saltRounds = 10
       const hashedPassword = await bcrypt.hash(password, saltRounds)
 
-      const user = await prisma.user.create({
+      await prisma.user.create({
         data: {
           email,
           password: hashedPassword,

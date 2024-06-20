@@ -4,10 +4,17 @@ import { prisma } from '../../lib/prisma'
 import bcrypt from 'bcrypt'
 import { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { BadRequest } from './_errors/bad-request'
+import { Unauthorized } from './_errors/unauthorized'
+import { Forbidden } from './_errors/forbidden'
+
+export interface AuthTokenPayload {
+  userId: string
+  storeId: string | null
+}
 
 export async function auth(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().post(
-    '/auth',
+    '/auth/login',
     {
       schema: {
         body: z.object({
@@ -15,8 +22,8 @@ export async function auth(app: FastifyInstance) {
           password: z.string().min(8),
         }),
         response: {
-          200: z.object({
-            token: z.string(),
+          201: z.object({
+            accessToken: z.string(),
           }),
           400: z.object({
             message: z.string(),
@@ -31,6 +38,15 @@ export async function auth(app: FastifyInstance) {
         where: {
           email,
         },
+        select: {
+          id: true,
+          password: true,
+          store: {
+            select: {
+              id: true,
+            },
+          },
+        },
       })
 
       if (!user) {
@@ -43,27 +59,80 @@ export async function auth(app: FastifyInstance) {
         throw new BadRequest('Email ou password inválidos')
       }
 
-      let name = user.lastName
-        ? user.firstName.concat(user.lastName)
-        : user.firstName
-
-      const token = app.jwt.sign(
+      const refreshToken = app.jwt.sign(
         {
-          name,
-          avatarUrl: user.avatar,
+          userId: user.id,
+          storeId: user.store !== null ? user.store.id : null,
         },
         {
-          sub: user.id,
-          expiresIn: '12 hours',
+          expiresIn: '30d',
         }
       )
 
-      reply.setCookie('auth', token, {
-        httpOnly: true,
-        maxAge: 60 * 60 * 12,
-      })
+      const accessToken = app.jwt.sign(
+        {
+          userId: user.id,
+          storeId: user.store !== null ? user.store.id : null,
+        },
+        {
+          expiresIn: '15m',
+        }
+      )
 
-      return reply.status(200).send({ token })
+      return reply
+        .status(201)
+        .setCookie('refreshToken', refreshToken, {
+          httpOnly: true,
+          secure: true,
+          maxAge: 30 * 24 * 60 * 60,
+          sameSite: 'none',
+          path: '/',
+        })
+        .send({ accessToken })
+    }
+  )
+
+  app.withTypeProvider<ZodTypeProvider>().post(
+    '/auth/refresh-token',
+    {
+      schema: {
+        response: {
+          201: z.object({
+            accessToken: z.string(),
+          }),
+          401: z.object({
+            message: z.string(),
+          }),
+          403: z.object({
+            message: z.string(),
+          }),
+        },
+      },
+    },
+    async (request, reply) => {
+      const { refreshToken } = request.cookies
+
+      if (!refreshToken) {
+        throw new Unauthorized()
+      }
+
+      const payload = app.jwt.decode<AuthTokenPayload>(refreshToken)
+
+      if (payload === null) {
+        throw new Forbidden()
+      }
+
+      const newAccessToken = app.jwt.sign(
+        {
+          userId: payload.userId,
+          storeId: payload.storeId,
+        },
+        {
+          expiresIn: '15m',
+        }
+      )
+
+      return reply.status(201).send({ accessToken: newAccessToken })
     }
   )
 }

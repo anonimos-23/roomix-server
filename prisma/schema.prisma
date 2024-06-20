@@ -1,11 +1,11 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider     = "postgresql"
   url          = env("DATABASE_URL")
   relationMode = "prisma"
-}
-
-generator client {
-  provider = "prisma-client-js"
 }
 
 model User {
@@ -17,7 +17,111 @@ model User {
   phone     String?
   avatar    String?
   gender    String?
-  createdAt DateTime @default(now())
+  createdAt DateTime @default(now()) @map("created_at")
+  store     Store?
+  Token     Token[]
 
   @@map("users")
+}
+
+model Store {
+  id              String   @id @default(uuid())
+  name            String
+  slogan          String?
+  slug            String   @unique
+  email           String
+  shippingAddress String?  @map("shipping_address")
+  country         String
+  userId          String   @unique @map("user_id")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  user          User           @relation(fields: [userId], references: [id])
+  products      Product[]
+  orders        Order[]
+  storeSettings StoreSettings?
+
+  @@map("stores")
+}
+
+model StoreSettings {
+  storeId           String  @id @unique
+  needCustomerName  Boolean @default(false)
+  needCustomerPhone Boolean @default(false)
+  needCustomerEmail Boolean @default(false)
+
+  store Store @relation(fields: [storeId], references: [id])
+}
+
+model Product {
+  id                  String   @id @default(uuid())
+  name                String
+  image               String?
+  price               Decimal
+  stock               Int
+  description         String?
+  slug                String
+  discount            Int?
+  canSellWithoutStock Boolean  @default(false)
+  storeId             String   @map("store_id")
+  createdAt           DateTime @default(now()) @map("created_at")
+
+  store Store @relation(fields: [storeId], references: [id])
+
+  @@index([storeId])
+  @@map("products")
+}
+
+model Order {
+  id                 String      @id @default(cuid())
+  storeId            String      @map("store_id")
+  customerEmail      String?     @map("customer_email")
+  customerPhone      String?     @map("customer_phone")
+  address            String
+  country            String
+  city               String
+  province           String
+  postal             String
+  currency           Currency
+  totalAmount        Decimal     @map("total_amount")
+  status             OrderStatus @default(Approving)
+  alternativeAddress String?     @map("alternative_address")
+  customerName       String?     @map("customer_name")
+  customerNotes      String?     @map("customer_notes")
+  createdAt          DateTime    @default(now()) @map("created_at")
+  store              Store       @relation(fields: [storeId], references: [id])
+
+  @@index([storeId])
+  @@map("orders")
+}
+
+model Token {
+  id     Int        @id @default(autoincrement())
+  value  String
+  type   TokenTypes
+  userId String
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@map("tokens")
+}
+
+enum TokenTypes {
+  RESET_PASSWORD
+  AUTH_REFRESH_TOKEN
+}
+
+enum OrderStatus {
+  Canceled
+  Approving
+  Preparing
+  Delivering
+  Delivered
+}
+
+enum Currency {
+  EUR
+  USD
+  BRL
+  GBP
 }
