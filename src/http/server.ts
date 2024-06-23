@@ -13,6 +13,14 @@ import { errorHandler } from './error-handler'
 import { createStore } from './routes/create-store'
 import { getProfile } from './routes/get-profile'
 import { getStore } from './routes/get-store'
+import { uploadImage } from './routes/images/upload-image'
+import { getImage } from './routes/images/get-image'
+import { deleteImage } from './routes/images/delete-image'
+import { createProduct } from './routes/products/create-product'
+import { getProducts } from './routes/products/get-products'
+import { deleteProduct } from './routes/products/delete-product'
+import { editProduct } from './routes/products/edit-product'
+import { applyDiscountOnProduct } from './routes/products/apply-discount'
 
 const app = fastify()
 
@@ -42,10 +50,21 @@ app.register(jwt, {
 
 // Routes registration
 app.register(createUser)
-app.register(auth)
 app.register(createStore)
+app.register(createProduct)
+app.register(uploadImage)
+app.register(auth)
+
+app.register(editProduct)
+app.register(applyDiscountOnProduct)
+
 app.register(getProfile)
 app.register(getStore)
+app.register(getImage)
+app.register(getProducts)
+
+app.register(deleteImage)
+app.register(deleteProduct)
 
 app.listen({ port: 3333 }).then(() => {
   console.log('🚀 HTTP Server running!')

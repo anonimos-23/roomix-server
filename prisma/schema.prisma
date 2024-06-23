@@ -15,11 +15,13 @@ model User {
   firstName String
   lastName  String?
   phone     String?
-  avatar    String?
+  fileId    String?  @unique
   gender    String?
   createdAt DateTime @default(now()) @map("created_at")
-  store     Store?
-  Token     Token[]
+
+  file  File?   @relation(fields: [fileId], references: [id])
+  store Store?
+  Token Token[]
 
   @@map("users")
 }
@@ -55,20 +57,44 @@ model StoreSettings {
 model Product {
   id                  String   @id @default(uuid())
   name                String
-  image               String?
   price               Decimal
-  stock               Int
+  stock               Int      @default(0)
   description         String?
-  slug                String
-  discount            Int?
+  slug                String   @unique
+  discount            Int      @default(0)
   canSellWithoutStock Boolean  @default(false)
   storeId             String   @map("store_id")
   createdAt           DateTime @default(now()) @map("created_at")
 
-  store Store @relation(fields: [storeId], references: [id])
+  store         Store           @relation(fields: [storeId], references: [id])
+  Product_Image Product_Image[]
 
   @@index([storeId])
   @@map("products")
+}
+
+model Product_Image {
+  id        String @id @default(cuid())
+  productId String
+  fileId    String
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  file    File    @relation(fields: [fileId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@index([fileId])
+}
+
+model File {
+  id          String    @id @default(cuid())
+  name        String
+  key         String
+  contentType String    @map("content_type")
+  type        FileTypes
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  Product_Image Product_Image[]
+  User          User?
 }
 
 model Order {
@@ -109,6 +135,13 @@ model Token {
 enum TokenTypes {
   RESET_PASSWORD
   AUTH_REFRESH_TOKEN
+}
+
+enum FileTypes {
+  avatar
+  storeLogo
+  storeBanner
+  storeProduct
 }
 
 enum OrderStatus {
