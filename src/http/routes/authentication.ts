@@ -6,6 +6,7 @@ import { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { BadRequest } from './_errors/bad-request'
 import { Unauthorized } from './_errors/unauthorized'
 import { Forbidden } from './_errors/forbidden'
+import { getLoggedUser } from '../middleware'
 
 export interface AuthTokenPayload {
   userId: string
@@ -89,6 +90,31 @@ export async function auth(app: FastifyInstance) {
           path: '/',
         })
         .send({ accessToken })
+    }
+  )
+
+  app.withTypeProvider<ZodTypeProvider>().get(
+    '/auth/logout',
+    {
+      schema: {
+        response: {
+          200: z.object({
+            accessToken: z.string(),
+          }),
+        },
+      },
+    },
+    async (_request, reply) => {
+      return reply
+        .status(200)
+        .setCookie('refreshToken', 'none', {
+          httpOnly: true,
+          secure: true,
+          maxAge: 5,
+          sameSite: 'none',
+          path: '/',
+        })
+        .send()
     }
   )
 
