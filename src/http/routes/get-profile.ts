@@ -15,7 +15,7 @@ export async function getProfile(app: FastifyInstance) {
             email: z.string(),
             name: z.string(),
             phone: z.string().nullable(),
-            avatarUrl: z.string().nullable(),
+            fileId: z.string().nullable(),
             storeId: z.string().nullable(),
           }),
           401: z.object({
@@ -40,7 +40,7 @@ export async function getProfile(app: FastifyInstance) {
           lastName: true,
           gender: true,
           phone: true,
-          avatar: true,
+          fileId: true,
           store: {
             select: {
               id: true,
@@ -55,9 +55,9 @@ export async function getProfile(app: FastifyInstance) {
 
       return reply.status(200).send({
         email: user.email,
-        name: user.firstName + user.lastName,
+        name: user.firstName + ' ' + user.lastName,
         phone: user.phone,
-        avatarUrl: user.avatar,
+        fileId: user.fileId,
         storeId: user.store !== null ? user.store.id : null,
       })
     }

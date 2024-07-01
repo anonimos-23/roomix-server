@@ -1,9 +1,9 @@
 import { FastifyInstance } from 'fastify'
 import { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
-import { prisma } from '../../lib/prisma'
-import { getLoggedUser } from '../middleware'
-import { Conflict } from './_errors/conflict'
+import { prisma } from '../../../lib/prisma'
+import { getLoggedUser } from '../../middleware'
+import { Conflict } from '../_errors/conflict'
 
 export async function createStore(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().post(
@@ -61,20 +61,4 @@ export async function createStore(app: FastifyInstance) {
       return reply.status(201).send({ storeId: id })
     }
   )
-
-  app.get('/stores/all', async () => {
-    const stores = await prisma.store.findMany()
-
-    return stores
-  })
-
-  app.delete('/store', async () => {
-    const result = await prisma.store.delete({
-      where: {
-        id: '7d885018-39dc-4278-a1fc-f9753454c3e1',
-      },
-    })
-
-    return result
-  })
 }

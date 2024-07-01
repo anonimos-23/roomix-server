@@ -1,0 +1,217 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table users {
+  id String [pk]
+  email String [unique, not null]
+  password String [not null]
+  firstName String [not null]
+  lastName String
+  phone String
+  fileId String [unique]
+  gender String
+  createdAt DateTime [default: `now()`, not null]
+  file File
+  store stores
+  Token tokens [not null]
+  ShoppingCart ShoppingCart [not null]
+  Order orders [not null]
+}
+
+Table stores {
+  id String [pk]
+  name String [not null]
+  slogan String
+  slug String [unique, not null]
+  email String [not null]
+  shippingAddress String
+  country String [not null]
+  stripeAccountId String [unique]
+  userId String [unique, not null]
+  createdAt DateTime [default: `now()`, not null]
+  user users [not null]
+  products products [not null]
+  orders orders [not null]
+  storeSettings StoreSettings
+  Store_Image Store_Image [not null]
+  StoreFaqs StoreFaqs [not null]
+}
+
+Table StoreSettings {
+  storeId String [pk]
+  needCustomerName Boolean [not null, default: false]
+  needCustomerPhone Boolean [not null, default: false]
+  needCustomerEmail Boolean [not null, default: false]
+  store stores [not null]
+}
+
+Table StoreFaqs {
+  id Int [pk, increment]
+  question String [not null]
+  answer String [not null]
+  storeId String [not null]
+  createdAt DateTime [default: `now()`, not null]
+  store stores [not null]
+}
+
+Table products {
+  id String [pk]
+  name String [not null]
+  price Decimal [not null]
+  stock Int [not null, default: 0]
+  description String
+  slug String [unique, not null]
+  discount Int [not null, default: 0]
+  canSellWithoutStock Boolean [not null, default: false]
+  storeId String [not null]
+  createdAt DateTime [default: `now()`, not null]
+  store stores [not null]
+  Product_Image Product_Image [not null]
+  ShoppingCart ShoppingCart [not null]
+  OrderItems OrderItems [not null]
+}
+
+Table Store_Image {
+  id String [pk]
+  storeId String [not null]
+  fileId String [not null]
+  store stores [not null]
+  file File [not null]
+}
+
+Table Product_Image {
+  id String [pk]
+  productId String [not null]
+  fileId String [not null]
+  product products [not null]
+  file File [not null]
+}
+
+Table File {
+  id String [pk]
+  name String [not null]
+  key String [not null]
+  contentType String [not null]
+  type FileTypes [not null]
+  createdAt DateTime [default: `now()`, not null]
+  Product_Image Product_Image [not null]
+  User users
+  Store_Image Store_Image [not null]
+}
+
+Table orders {
+  id String [pk]
+  storeId String [not null]
+  userId String [not null]
+  customerEmail String
+  customerPhone String
+  address String [not null]
+  country String [not null]
+  city String [not null]
+  province String [not null]
+  postal String [not null]
+  currency Currency [not null]
+  totalAmount Decimal [not null]
+  status OrderStatus [not null, default: 'Preparing']
+  alternativeAddress String
+  customerName String
+  customerNotes String
+  createdAt DateTime [default: `now()`, not null]
+  store stores [not null]
+  user users [not null]
+  OrderItems OrderItems [not null]
+}
+
+Table OrderItems {
+  id String [pk]
+  orderId String [not null]
+  productId String [not null]
+  quantity Int [not null]
+  order orders [not null]
+  product products [not null]
+
+  indexes {
+    (orderId, productId) [unique]
+  }
+}
+
+Table ShoppingCart {
+  id Int [pk, increment]
+  userId String [not null]
+  productId String [not null]
+  quantity Int [not null, default: 1]
+  createdAt DateTime [default: `now()`, not null]
+  user users [not null]
+  product products [not null]
+
+  indexes {
+    (userId, productId) [unique]
+  }
+}
+
+Table tokens {
+  id Int [pk, increment]
+  value String [not null]
+  type TokenTypes [not null]
+  userId String [not null]
+  user users [not null]
+}
+
+Enum TokenTypes {
+  RESET_PASSWORD
+  AUTH_REFRESH_TOKEN
+}
+
+Enum FileTypes {
+  avatar
+  storeLogo
+  storeBanner
+  storeProduct
+}
+
+Enum OrderStatus {
+  Canceled
+  Preparing
+  Delivering
+  Delivered
+}
+
+Enum Currency {
+  EUR
+  USD
+  BRL
+  GBP
+}
+
+Ref: users.fileId - File.id
+
+Ref: stores.userId - users.id
+
+Ref: StoreSettings.storeId - stores.id
+
+Ref: StoreFaqs.storeId > stores.id
+
+Ref: products.storeId > stores.id
+
+Ref: Store_Image.storeId > stores.id [delete: Cascade]
+
+Ref: Store_Image.fileId > File.id [delete: Cascade]
+
+Ref: Product_Image.productId > products.id [delete: Cascade]
+
+Ref: Product_Image.fileId > File.id [delete: Cascade]
+
+Ref: orders.storeId > stores.id
+
+Ref: orders.userId > users.id
+
+Ref: OrderItems.orderId > orders.id
+
+Ref: OrderItems.productId > products.id
+
+Ref: ShoppingCart.userId > users.id
+
+Ref: ShoppingCart.productId > products.id
+
+Ref: tokens.userId > users.id

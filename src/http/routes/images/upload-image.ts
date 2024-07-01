@@ -43,7 +43,7 @@ export async function uploadImage(app: FastifyInstance) {
           name,
           contentType,
           key: fileKey,
-          type: 'storeProduct',
+          type,
         },
       })
 
@@ -52,6 +52,26 @@ export async function uploadImage(app: FastifyInstance) {
           data: {
             fileId: id,
             productId: entityId,
+          },
+        })
+      }
+
+      if (type === 'storeLogo' || type === 'storeBanner') {
+        await prisma.store_Image.create({
+          data: {
+            fileId: id,
+            storeId: entityId,
+          },
+        })
+      }
+
+      if (type === 'avatar') {
+        await prisma.user.update({
+          data: {
+            fileId: id,
+          },
+          where: {
+            id: entityId,
           },
         })
       }

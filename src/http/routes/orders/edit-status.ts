@@ -5,31 +5,31 @@ import { prisma } from '../../../lib/prisma'
 import { getLoggedUser } from '../../middleware'
 import { Unauthorized } from '../_errors/unauthorized'
 
-export async function applyDiscountOnProduct(app: FastifyInstance) {
+export async function editOrderStatus(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().patch(
-    '/products/:id/discount',
+    '/order/:id/status',
     {
       schema: {
         params: z.object({
           id: z.string(),
         }),
         body: z.object({
-          discount: z.number().min(0).max(100),
+          status: z.enum(['Canceled', 'Preparing', 'Delivering', 'Delivered']),
         }),
       },
     },
     async (request, reply) => {
       const { storeId } = await getLoggedUser(app, request)
-      const { discount } = request.body
+      const { status } = request.body
       const { id } = request.params
 
       if (!storeId) {
         throw new Unauthorized('Operação exclusiva para gerentes de uma loja')
       }
 
-      await prisma.product.update({
+      await prisma.order.update({
         data: {
-          discount,
+          status,
         },
         where: {
           id,

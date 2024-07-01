@@ -2,6 +2,10 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator dbml {
+  provider = "prisma-dbml-generator"
+}
+
 datasource db {
   provider     = "postgresql"
   url          = env("DATABASE_URL")
@@ -19,9 +23,11 @@ model User {
   gender    String?
   createdAt DateTime @default(now()) @map("created_at")
 
-  file  File?   @relation(fields: [fileId], references: [id])
-  store Store?
-  Token Token[]
+  file         File?          @relation(fields: [fileId], references: [id])
+  store        Store?
+  Token        Token[]
+  ShoppingCart ShoppingCart[]
+  Order        Order[]
 
   @@map("users")
 }
@@ -34,6 +40,7 @@ model Store {
   email           String
   shippingAddress String?  @map("shipping_address")
   country         String
+  stripeAccountId String?  @unique @map("stripe_account_id")
   userId          String   @unique @map("user_id")
   createdAt       DateTime @default(now()) @map("created_at")
 
@@ -41,6 +48,8 @@ model Store {
   products      Product[]
   orders        Order[]
   storeSettings StoreSettings?
+  Store_Image   Store_Image[]
+  StoreFaqs     StoreFaqs[]
 
   @@map("stores")
 }
@@ -52,6 +61,18 @@ model StoreSettings {
   needCustomerEmail Boolean @default(false)
 
   store Store @relation(fields: [storeId], references: [id])
+}
+
+model StoreFaqs {
+  id        Int      @id @default(autoincrement())
+  question  String
+  answer    String
+  storeId   String
+  createdAt DateTime @default(now())
+
+  store Store @relation(fields: [storeId], references: [id])
+
+  @@index([storeId])
 }
 
 model Product {
@@ -68,9 +89,23 @@ model Product {
 
   store         Store           @relation(fields: [storeId], references: [id])
   Product_Image Product_Image[]
+  ShoppingCart  ShoppingCart[]
+  OrderItems    OrderItems[]
 
   @@index([storeId])
   @@map("products")
+}
+
+model Store_Image {
+  id      String @id @default(cuid())
+  storeId String
+  fileId  String
+
+  store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  file  File  @relation(fields: [fileId], references: [id], onDelete: Cascade)
+
+  @@index([storeId])
+  @@index([fileId])
 }
 
 model Product_Image {
@@ -95,11 +130,13 @@ model File {
 
   Product_Image Product_Image[]
   User          User?
+  Store_Image   Store_Image[]
 }
 
 model Order {
   id                 String      @id @default(cuid())
   storeId            String      @map("store_id")
+  userId             String      @map("user_id")
   customerEmail      String?     @map("customer_email")
   customerPhone      String?     @map("customer_phone")
   address            String
@@ -109,15 +146,48 @@ model Order {
   postal             String
   currency           Currency
   totalAmount        Decimal     @map("total_amount")
-  status             OrderStatus @default(Approving)
+  status             OrderStatus @default(Preparing)
   alternativeAddress String?     @map("alternative_address")
   customerName       String?     @map("customer_name")
   customerNotes      String?     @map("customer_notes")
   createdAt          DateTime    @default(now()) @map("created_at")
-  store              Store       @relation(fields: [storeId], references: [id])
+
+  store      Store        @relation(fields: [storeId], references: [id])
+  user       User         @relation(fields: [userId], references: [id])
+  OrderItems OrderItems[]
 
   @@index([storeId])
+  @@index([userId])
   @@map("orders")
+}
+
+model OrderItems {
+  id        String @id @default(cuid())
+  orderId   String
+  productId String
+  quantity  Int
+
+  order   Order   @relation(fields: [orderId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+
+  @@unique([orderId, productId])
+  @@index([orderId])
+  @@index([productId])
+}
+
+model ShoppingCart {
+  id        Int      @id @default(autoincrement())
+  userId    String
+  productId String
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user    User    @relation(fields: [userId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+
+  @@unique([userId, productId])
+  @@index([userId])
+  @@index([productId])
 }
 
 model Token {
@@ -146,7 +216,6 @@ enum FileTypes {
 
 enum OrderStatus {
   Canceled
-  Approving
   Preparing
   Delivering
   Delivered

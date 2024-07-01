@@ -1,12 +1,11 @@
 import { FastifyInstance } from 'fastify'
 import { z } from 'zod'
-import { prisma } from '../../lib/prisma'
+import { prisma } from '../../../lib/prisma'
 import bcrypt from 'bcrypt'
 import { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { BadRequest } from './_errors/bad-request'
-import { Unauthorized } from './_errors/unauthorized'
-import { Forbidden } from './_errors/forbidden'
-import { getLoggedUser } from '../middleware'
+import { BadRequest } from './../_errors/bad-request'
+import { Unauthorized } from './../_errors/unauthorized'
+import { Forbidden } from './../_errors/forbidden'
 
 export interface AuthTokenPayload {
   userId: string
